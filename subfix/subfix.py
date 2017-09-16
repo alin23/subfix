@@ -4,13 +4,8 @@ from pathlib import Path
 
 import fire
 import pysrt
-import daiquiri
 
-daiquiri.setup(outputs=(
-    daiquiri.output.STDERR,
-    daiquiri.output.File(directory="/tmp"),
-))
-logger = daiquiri.getLogger()
+from .log import logger
 
 
 class SubtitleFixer():
