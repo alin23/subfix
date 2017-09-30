@@ -90,7 +90,7 @@ class SubtitleFixer():
                 sub.replace(newsub)
                 logger.info(f'Renamed {sub.name} to {newsub.name}')
 
-    def shift(self, dir=None, start_index=0, stop_index=None, **by):
+    def shift(self, dir=None, subtitle=None, start_index=0, stop_index=None, **by):
         """Shift subtitles by a ratio or an offset.
 
         Args:
@@ -100,8 +100,13 @@ class SubtitleFixer():
             **by (dict): Pysrt `shift` arguments
         """
 
-        dir = Path(dir or self.dir)
-        for subtitle in self.subtitles(dir)[start_index:stop_index]:
+        if not subtitle:
+            dir = Path(dir or self.dir)
+            subtitles = self.subtitles(dir)[start_index:stop_index]
+        else:
+            subtitles = [subtitle]
+
+        for subtitle in subtitles:
             sub = pysrt.open(subtitle)
             sub.shift(**by)
             sub.save(subtitle)
