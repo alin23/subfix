@@ -7,6 +7,11 @@ import pysrt
 
 from .log import logger
 
+BACKUP_EXT = ".bkp"
+MOVIE_EXTS = ["*.mkv", "*.avi", "*.mp4"]
+SUB_EXTS = ["*.srt", "*.sub"]
+SUB_BKP_EXTS = [f"{ext}{BACKUP_EXT}" for ext in SUB_EXTS]
+
 
 class SubtitleFixer:
     """Utility for fixing subtitles.
@@ -14,11 +19,6 @@ class SubtitleFixer:
     Attributes:
         dir (str, optional): Default path to work on
     """
-
-    BACKUP_EXT = ".bkp"
-    MOVIE_EXTS = ["*.mkv", "*.avi", "*.mp4"]
-    SUB_EXTS = ["*.srt", "*.sub"]
-    SUB_BKP_EXTS = [f"{ext}{BACKUP_EXT}" for ext in SUB_EXTS]
 
     def __init__(self, dir="."):
         super().__init__()
@@ -36,10 +36,7 @@ class SubtitleFixer:
 
         dir = Path(dir or self.dir)
         return sum(
-            (
-                sorted(dir.glob(ext), key=lambda p: str(p).lower())
-                for ext in self.MOVIE_EXTS
-            ),
+            (sorted(dir.glob(ext), key=lambda p: str(p).lower()) for ext in MOVIE_EXTS),
             [],
         )
 
@@ -55,10 +52,7 @@ class SubtitleFixer:
 
         dir = Path(dir or self.dir)
         return sum(
-            (
-                sorted(dir.glob(ext), key=lambda p: str(p).lower())
-                for ext in self.SUB_EXTS
-            ),
+            (sorted(dir.glob(ext), key=lambda p: str(p).lower()) for ext in SUB_EXTS),
             [],
         )
 
@@ -76,7 +70,7 @@ class SubtitleFixer:
         return sum(
             (
                 sorted(dir.glob(ext), key=lambda p: str(p).lower())
-                for ext in self.SUB_BKP_EXTS
+                for ext in SUB_BKP_EXTS
             ),
             [],
         )
@@ -182,7 +176,7 @@ class SubtitleFixer:
             logger.info(f"Shifted {subtitle} by {by.items()}")
 
     def backup(self, subtitle, force=False):
-        bkp = subtitle.with_suffix(f"{subtitle.suffix}{self.BACKUP_EXT}")
+        bkp = subtitle.with_suffix(f"{subtitle.suffix}{BACKUP_EXT}")
         if bkp.exists() and not force:
             logger.warning("Skipping backup of %s as it already exists", subtitle)
             return
